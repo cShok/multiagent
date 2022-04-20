@@ -133,7 +133,78 @@ class MinimaxAgent(MultiAgentSearchAgent):
     Your minimax agent (question 2)
     """
 
+    def maxVal(self, gameState, depth):
+        action_wanted = '0'
+        if gameState.isWin() or gameState.isLose() or depth ==0:
+            print("final" ,self.evaluationFunction(gameState))
 
+            return self.evaluationFunction(gameState), Directions.STOP
+        max_score = -9999
+        legalMoves = gameState.getLegalActions(0)
+        for action in legalMoves:
+            state = gameState.generateSuccessor(0, action)
+            min_score, next_action = self.minVal(state, depth -1)
+            if min_score > max_score:
+                max_score = min_score
+                action_wanted = next_action
+        return max_score, action_wanted
+
+    def minVal(self, gameState, depth):
+        print("in min")
+        if gameState.isWin() or gameState.isLose() or depth == 0:
+            print("final" , self.evaluationFunction(gameState))
+            return self.evaluationFunction(gameState), Directions.STOP
+        min_score = 9999
+        action_wanted ='0'
+        agents = gameState.getNumAgents()
+        for agent in range(1, agents):
+            legalMoves = gameState.getLegalActions(agent)
+            print(legalMoves)
+            for action in legalMoves:
+                state = gameState.generateSuccessor(agent, action)
+                max_score, next_action = self.maxVal(state, depth -1)
+                if min_score > max_score:
+                    min_score = max_score
+                    action_wanted = next_action
+        return min_score, action_wanted
+
+    def getAction(self, gameState):
+        """
+        Returns the minimax action from the current gameState using self.depth
+        and self.evaluationFunction.
+
+        Here are some method calls that might be useful when implementing minimax.
+
+        gameState.getLegalActions(agentIndex):
+        Returns a list of legal actions for an agent
+        agentIndex=0 means Pacman, ghosts are >= 1
+
+        gameState.generateSuccessor(agentIndex, action):
+        Returns the successor game state after an agent takes an action
+
+        gameState.getNumAgents():
+        Returns the total number of agents in the game
+
+        gameState.isWin():
+        Returns whether or not the game state is a winning state
+
+        gameState.isLose():
+        Returns whether or not the game state is a losing state
+        """
+        "*** YOUR CODE HERE ***"
+
+
+        legalMoves = gameState.getLegalActions()
+        maxTotal = 0
+        final_action = []
+        for action in legalMoves:
+            state = gameState.generateSuccessor(0, action)
+            maxi, actionantd = self.maxVal(state, self.depth *2)
+            final_action = actionantd
+            if maxi > maxTotal:
+                print("hhhhhhhhhhhhhhhh")
+                maxTotal = maxi
+        print(" final action", final_action)
         return final_action
 
 
